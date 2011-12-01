@@ -41,11 +41,6 @@ module NoiseAndHeat
                     end
                 end
                 @date_time = $2
-                puts "markup: #{markup}"
-                puts "@use_post_date: #{@use_post_date}"
-                puts "@use_post_updated: #{@use_post_updated}"
-                puts "$1: #{$1}"
-                puts "$2: #{$2}"
             else
                 raise ::Liquid::SyntaxError.new("ddate should be of the form {% ddate %} for date at generation, {% ddate date %} for date of post,  {% ddate updated %} for date post updated, or {% ddate 1976-07-15 18:40 %} for a custom date")
             end
