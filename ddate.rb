@@ -28,11 +28,26 @@
 module NoiseAndHeat
     class DiscordianDate < Liquid::Tag
         def initialize(tag_name, markup, tokens)
-            if markup =~ /(post|page)?(.*)/i
-                @use_post_date = $1 ? true : false
+            if markup =~ /(date|updated)?(.*)/i
+                @use_post_date = false
+                @use_post_updated = false
+                if $1
+                    if $1.downcase == "date"
+                        @use_post_date = true
+                    elsif $1.downcase == "updated"
+                        @use_post_updated = true
+                    else
+                        raise ::Liquid::SyntaxError.new("ddate should be of the form {% ddate %} for date at generation, {% ddate date %} for date of post,  {% ddate updated %} for date post updated, or {% ddate 1976-07-15 18:40 %} for a custom date")
+                    end
+                end
                 @date_time = $2
+                puts "markup: #{markup}"
+                puts "@use_post_date: #{@use_post_date}"
+                puts "@use_post_updated: #{@use_post_updated}"
+                puts "$1: #{$1}"
+                puts "$2: #{$2}"
             else
-                raise ::Liquid::SyntaxError.new("ddate should be of the form {% ddate %} for date at generation, {% ddate post %} for date of post or {% ddate 1976-07-15 18:40 %} for a custom date")
+                raise ::Liquid::SyntaxError.new("ddate should be of the form {% ddate %} for date at generation, {% ddate date %} for date of post,  {% ddate updated %} for date post updated, or {% ddate 1976-07-15 18:40 %} for a custom date")
             end
         end
 
@@ -53,18 +68,25 @@ module NoiseAndHeat
             return Time.now
         end
 
-        def render(context)
-            if @use_post_date
-                if context["page"]
-                    ddate = DDate.new(context["page"]["date"]).to_s
-                elsif context["post"]
-                    ddate = DDate.new(context["post"]["date"]).to_s
-                end
-            else
-                ddate = DDate.new(parse_date_time(@date_time)).to_s
-            end
+        def get_post_date(context)
+            article_details = context["post"] || context["page"]
+            article_date = article_details["date"] if article_details
 
-            return ddate
+            return DDate.new(article_date || Time.now).to_s
+        end
+
+        def get_post_updated(context)
+            article_details = context["post"] || context["page"]
+            article_updated = article_details["updated"] if article_details
+
+            return DDate.new(parse_date_time(article_updated)).to_s
+        end
+
+        def render(context)
+            return get_post_date(context) if @use_post_date
+            return get_post_updated(context) if @use_post_updated
+
+            return DDate.new(parse_date_time(@date_time)).to_s
         end
     end
 end
