@@ -67,14 +67,26 @@ module NoiseAndHeat
             article_details = context["post"] || context["page"]
             article_date = article_details["date"] if article_details
 
-            return DDate.new(article_date || Time.now).to_s
+            if article_date.kind_of? Time
+              return DDate.new(article_date).to_s
+            elsif article_date.kind_of? String
+              return DDate.new(parse_date_time(article_date)).to_s
+            else
+              return DDate.new(Time.now).to_s
+            end
         end
 
         def get_post_updated(context)
             article_details = context["post"] || context["page"]
             article_updated = article_details["updated"] if article_details
 
-            return DDate.new(parse_date_time(article_updated)).to_s
+            if article_updated.kind_of? Time
+              return DDate.new(article_updated).to_s
+            elsif article_updated.kind_of? String
+              return DDate.new(parse_date_time(article_updated)).to_s
+            else
+              return DDate.new(Time.now).to_s
+            end
         end
 
         def render(context)
@@ -97,46 +109,46 @@ Liquid::Template.register_tag('ddate', NoiseAndHeat::DiscordianDate)
 
 # St. Tib's Day occurs once every 4 years (1+4= 5 ) and is inserted between the 59th and 60th days of the Season of Chaos.
 #       The year that is 1991 by the Thuddite Reckoning is 3157 to Discordians. The next St. Tibs Day after that year is 3158.
-#      
-# 
+#
+#
 #                     SM BT PD PP SO                          SM BT PD PP SO
 #                     -- -- -- -- --                          -- -- -- -- --
 # Jan  1  2  3  4  5   1  2  3  4  5 Chs  Jul  5  6  7  8  9  40 41 42 43 44 Cfn
-#      6  7  8  9 10   6  7  8  9 10          10 11 12 13 14  45 46 47 48 49    
-#     11 12 13 14 15  11 12 13 14 15          15 16 17 18 19  50 51 52 53 54    
-#     16 17 18 19 20  16 17 18 19 20          20 21 22 23 24  55 56 57 58 59    
-#     21 22 23 24 25  21 22 23 24 25          25 26 27 28 29  60 61 62 63 64    
-#     26 27 28 29 30  26 27 28 29 30          30 31  1  2  3  65 66 67 68 69    
+#      6  7  8  9 10   6  7  8  9 10          10 11 12 13 14  45 46 47 48 49
+#     11 12 13 14 15  11 12 13 14 15          15 16 17 18 19  50 51 52 53 54
+#     16 17 18 19 20  16 17 18 19 20          20 21 22 23 24  55 56 57 58 59
+#     21 22 23 24 25  21 22 23 24 25          25 26 27 28 29  60 61 62 63 64
+#     26 27 28 29 30  26 27 28 29 30          30 31  1  2  3  65 66 67 68 69
 #     31  1  2  3  4  31 32 33 34 35      Aug  4  5  6  7  8  70 71 72 73  1 Bcy
-# Feb  5  6  7  8  9  36 37 38 39 40           9 10 11 12 13   2  3  4  5  6    
-#     10 11 12 13 14  41 42 43 44 45          14 15 16 17 18   7  8  9 10 11    
-#     15 16 17 18 19  46 47 48 49 50          19 20 21 22 23  12 13 14 15 16    
-#     20 21 22 23 24  51 52 53 54 55          24 25 26 27 28  17 18 19 20 21    
-#     25 26 27 28* 1  56 57 58 59 60          29 30 31  1  2  22 23 24 25 26    
-# Mar  2  3  4  5  6  61 62 63 64 65      Sep  3  4  5  6  7  27 28 29 30 31    
-#      7  8  9 10 11  66 67 68 69 70           8  9 10 11 12  32 33 34 35 36    
-#     12 13 14 15 16  71 72 73  1  2 Dsc      13 14 15 16 17  37 38 39 40 41    
-#     17 18 19 20 21   3  4  5  6  7          18 19 20 21 22  42 43 44 45 46    
-#     22 23 24 25 26   8  9 10 11 12          23 24 25 26 27  47 48 49 50 51    
-#     27 28 29 30 31  13 14 15 16 17          28 29 30  1  2  52 53 54 55 56    
-# Apr  1  2  3  4  5  18 19 20 21 22      Oct  3  4  5  6  7  57 58 59 60 61    
-#      6  7  8  9 10  23 24 25 26 27           8  9 10 11 12  62 63 64 65 66    
-#     11 12 13 14 15  28 29 30 31 32          13 14 15 16 17  67 68 69 70 71    
+# Feb  5  6  7  8  9  36 37 38 39 40           9 10 11 12 13   2  3  4  5  6
+#     10 11 12 13 14  41 42 43 44 45          14 15 16 17 18   7  8  9 10 11
+#     15 16 17 18 19  46 47 48 49 50          19 20 21 22 23  12 13 14 15 16
+#     20 21 22 23 24  51 52 53 54 55          24 25 26 27 28  17 18 19 20 21
+#     25 26 27 28* 1  56 57 58 59 60          29 30 31  1  2  22 23 24 25 26
+# Mar  2  3  4  5  6  61 62 63 64 65      Sep  3  4  5  6  7  27 28 29 30 31
+#      7  8  9 10 11  66 67 68 69 70           8  9 10 11 12  32 33 34 35 36
+#     12 13 14 15 16  71 72 73  1  2 Dsc      13 14 15 16 17  37 38 39 40 41
+#     17 18 19 20 21   3  4  5  6  7          18 19 20 21 22  42 43 44 45 46
+#     22 23 24 25 26   8  9 10 11 12          23 24 25 26 27  47 48 49 50 51
+#     27 28 29 30 31  13 14 15 16 17          28 29 30  1  2  52 53 54 55 56
+# Apr  1  2  3  4  5  18 19 20 21 22      Oct  3  4  5  6  7  57 58 59 60 61
+#      6  7  8  9 10  23 24 25 26 27           8  9 10 11 12  62 63 64 65 66
+#     11 12 13 14 15  28 29 30 31 32          13 14 15 16 17  67 68 69 70 71
 #     16 17 18 19 20  33 34 35 36 37          18 19 20 21 22  72 73  1  2  3 Afm
-#     21 22 23 24 25  38 39 40 41 42          23 24 25 26 27   4  5  6  7  8    
-#     26 27 28 29 30  43 44 45 46 47          28 29 30 31  1   9 10 11 12 13    
-# May  1  2  3  4  5  48 49 50 51 52      Nov  2  3  4  5  6  14 15 16 17 18    
-#      6  7  8  9 10  53 54 55 56 57           7  8  9 10 11  19 20 21 22 23    
-#     11 12 13 14 15  58 59 60 61 62          12 13 14 15 16  24 25 26 27 28    
-#     16 17 18 19 20  63 64 65 66 67          17 18 19 20 21  29 30 31 32 33    
-#     21 22 23 24 25  68 69 70 71 72          22 23 24 25 26  34 35 36 37 38    
-#     26 27 28 29 30  73  1  2  3  4 Cfn      27 28 29 30  1  39 40 41 42 43    
-#     31  1  2  3  4   5  6  7  8  9      Dec  2  3  4  5  6  44 45 46 47 48    
-# Jun  5  6  7  8  9  10 11 12 13 14           7  8  9 10 11  49 50 51 52 53    
-#     10 11 12 13 14  15 16 17 18 19          12 13 14 15 16  54 55 56 57 58    
-#     15 16 17 18 19  20 21 22 23 24          17 18 19 20 21  59 60 61 62 63    
-#     20 21 22 23 24  25 26 27 28 29          22 23 24 25 26  64 65 66 67 68    
-#     25 26 27 28 29  30 31 32 33 34          27 28 29 30 31  69 70 71 72 73    
+#     21 22 23 24 25  38 39 40 41 42          23 24 25 26 27   4  5  6  7  8
+#     26 27 28 29 30  43 44 45 46 47          28 29 30 31  1   9 10 11 12 13
+# May  1  2  3  4  5  48 49 50 51 52      Nov  2  3  4  5  6  14 15 16 17 18
+#      6  7  8  9 10  53 54 55 56 57           7  8  9 10 11  19 20 21 22 23
+#     11 12 13 14 15  58 59 60 61 62          12 13 14 15 16  24 25 26 27 28
+#     16 17 18 19 20  63 64 65 66 67          17 18 19 20 21  29 30 31 32 33
+#     21 22 23 24 25  68 69 70 71 72          22 23 24 25 26  34 35 36 37 38
+#     26 27 28 29 30  73  1  2  3  4 Cfn      27 28 29 30  1  39 40 41 42 43
+#     31  1  2  3  4   5  6  7  8  9      Dec  2  3  4  5  6  44 45 46 47 48
+# Jun  5  6  7  8  9  10 11 12 13 14           7  8  9 10 11  49 50 51 52 53
+#     10 11 12 13 14  15 16 17 18 19          12 13 14 15 16  54 55 56 57 58
+#     15 16 17 18 19  20 21 22 23 24          17 18 19 20 21  59 60 61 62 63
+#     20 21 22 23 24  25 26 27 28 29          22 23 24 25 26  64 65 66 67 68
+#     25 26 27 28 29  30 31 32 33 34          27 28 29 30 31  69 70 71 72 73
 #     30  1  2  3  4  35 36 37 38 39
 
 
@@ -146,50 +158,50 @@ class DDate
   def initialize(gregorian_time=nil)
     @time = gregorian_time || Time.now
   end
-  
+
   def month_number
     (yday-1) / 73
   end
-  
+
   def month
     ["Chaos", "Discord", "Confusion", "Bureaucracy", "The Aftermath"][month_number]
   end
-  
-  
+
+
   def day_of_month
     yday % 73 == 0 ? 73 : yday % 73
   end
-  
+
   def day_of_week
     return -1 if tibs_day?
     yday % 5
   end
-  
+
   def day_of_week_name
     return "St. Tib's Day" if tibs_day?
     ["Setting Orange", 'Sweetmorn', 'Boomtime', 'Pungenday', 'Prickle Prickle'][day_of_week]
   end
-  
+
   def year
     @time.year + 1166
   end
-  
+
   def holyday
     case day_of_month
     when 5
-      ["Mungday", "Mojoday", "Syaday", "Zaraday", "Maladay"][month_number] 
+      ["Mungday", "Mojoday", "Syaday", "Zaraday", "Maladay"][month_number]
     when 50
-      ["Chaoflux", "Discoflux", "Confuflux", "Bureflux", "Afflux"][month_number] 
+      ["Chaoflux", "Discoflux", "Confuflux", "Bureflux", "Afflux"][month_number]
     else
       "St. Tib's Day" if tibs_day?
     end
   end
 
-  
+
   def to_s(format_str="%W[, %d] of %M %y YOLD{ and the holyday of %H}")
     format(format_str)
   end
-  
+
   def format(str)
     formattings = [["%w","day_of_week"],
                    ["%W","day_of_week_name"],
@@ -213,15 +225,15 @@ class DDate
     end
     str
   end
-  
+
   def tib_year?
     @time.year % 4 == 0
   end
-  
+
   def tibs_day?
     tib_year? && @time.yday == 31+29
   end
-  
+
 private
   def yday
     return (@time.yday-1) if tib_year? and @time.yday > 60
