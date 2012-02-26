@@ -63,9 +63,9 @@ module NoiseAndHeat
             return Time.now
         end
 
-        def get_post_date(context)
+        def get_post_ddate_string(context, field)
             article_details = context["post"] || context["page"]
-            article_date = article_details["date"] if article_details
+            article_date = article_details[field] if article_details
 
             if article_date.kind_of? Time
               return DDate.new(article_date).to_s
@@ -76,17 +76,12 @@ module NoiseAndHeat
             end
         end
 
-        def get_post_updated(context)
-            article_details = context["post"] || context["page"]
-            article_updated = article_details["updated"] if article_details
+        def get_post_date(context)
+            return get_post_ddate_string context, "date"
+        end
 
-            if article_updated.kind_of? Time
-              return DDate.new(article_updated).to_s
-            elsif article_updated.kind_of? String
-              return DDate.new(parse_date_time(article_updated)).to_s
-            else
-              return DDate.new(Time.now).to_s
-            end
+        def get_post_updated(context)
+            return get_post_ddate_string context, "updated"
         end
 
         def render(context)
