@@ -11,4 +11,4 @@ Use:
     {% ddate 1976-07-15 18:40 %} # Output a custom date as a Discordian date
 
 Either copy ddate.rb to your Octopress plugins folder or add this repository
-as a subodule in your plugins folder.
+as a submodule in your plugins folder.
